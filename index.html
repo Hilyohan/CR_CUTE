@@ -3,1238 +3,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>크리스마스 캐릭터 워커 (PC Studio Edition)</title>
-    <!-- Tailwind CSS (Play CDN) -->
+    <title>Dynamic Motion Studio</title>
+    
+    <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- GIF Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    animation: {
-                        'fade-in-down': 'fadeInDown 0.5s ease-out',
-                        'pulse-red': 'pulseRed 2s infinite',
-                    },
-                    keyframes: {
-                        fadeInDown: {
-                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        pulseRed: {
-                            '0%, 100%': { backgroundColor: 'rgba(239, 68, 68, 1)' },
-                            '50%': { backgroundColor: 'rgba(220, 38, 38, 0.7)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Mountains+of+Christmas:wght@700&display=swap');
 
-        body {
-            font-family: 'Gowun Dodum', sans-serif;
-            background-color: #0f172a;
-            color: white;
-            overflow: hidden; /* Prevent body scroll for App-like feel */
-        }
-
-        .christmas-font {
-            font-family: 'Mountains of Christmas', cursive;
-        }
-
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(30, 41, 59, 0.5); }
-        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-
-        input[type="range"] { accent-color: #ef4444; height: 4px; border-radius: 2px; cursor: pointer; }
-        
-        input[type="number"]::-webkit-inner-spin-button, 
-        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type="number"] { -moz-appearance: textfield; }
-
-        select {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
-            background-repeat: no-repeat;
-            background-size: 1.2em 1.2em;
-            padding-right: 2rem;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-    </style>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="h-screen w-screen flex flex-col bg-[url('https://images.unsplash.com/photo-1542277874-329883502801?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-fixed bg-center">
+<body class="h-screen w-screen flex flex-col bg-slate-950 text-slate-300 overflow-hidden selection:bg-blue-500 selection:text-white">
     
-    <div class="fixed inset-0 bg-slate-900/90 -z-10"></div>
-
-    <!-- Top Navigation Bar -->
-    <header class="h-16 shrink-0 border-b border-white/10 bg-slate-900/50 backdrop-blur-md px-6 flex items-center justify-between z-20">
-        <div class="flex items-center gap-4">
-            <h1 class="text-2xl text-red-500 christmas-font drop-shadow-[0_0_10px_rgba(220,38,38,0.5)] flex items-center gap-2">
-                <i class="fa-solid fa-gift text-yellow-400"></i>
-                Christmas Studio <span class="text-slate-500 text-sm font-sans font-normal hidden md:inline">| PC Edition</span>
+    <!-- Header -->
+    <header class="h-14 shrink-0 border-b border-white/5 bg-slate-900 flex items-center justify-between px-6 z-30 shadow-md">
+        <div class="flex items-center gap-3 select-none">
+            <div class="w-8 h-8 rounded bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                <i class="fa-solid fa-shapes"></i>
+            </div>
+            <h1 class="text-lg font-bold tracking-tight text-slate-100 mr-6">
+                Dynamic Motion <span class="text-slate-500 font-normal">Studio</span>
             </h1>
+            
+            <!-- Navigation Tabs -->
+            <nav class="flex gap-1">
+                <button onclick="openStyleGallery(selectedObjectId)" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 transition flex items-center gap-2">
+                    <i class="fa-solid fa-photo-film"></i> 스타일 갤러리
+                </button>
+            </nav>
         </div>
         
-        <div class="flex gap-3 items-center">
-            <!-- Format Selector -->
-            <div class="flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700">
-                <select id="recordFormat" onchange="updateRecordBtnLabel()" class="bg-transparent border-none text-xs text-white outline-none pl-2 pr-6 py-1 w-32 cursor-pointer hover:text-yellow-400 transition">
-                    <option value="webm">WebM (Video)</option>
-                    <option value="gif">GIF (Animation)</option>
-                </select>
-            </div>
-
-            <!-- Recording Button -->
-            <button id="recordBtn" onclick="toggleRecording()" class="h-9 px-4 bg-slate-700 hover:bg-slate-600 hover:scale-105 active:scale-95 text-white rounded-lg text-sm transition shadow-lg flex items-center gap-2 border border-slate-500 group">
-                <div id="recordIcon" class="w-3 h-3 rounded-full bg-red-500 group-hover:shadow-[0_0_10px_red] transition"></div>
-                <span id="recordText" class="font-mono font-bold tracking-tight">REC (60s)</span>
+        <div class="flex gap-2">
+            <!-- Project Save/Load -->
+            <button onclick="exportProject()" class="h-8 px-3 bg-indigo-600 hover:bg-indigo-500 text-white text-xs rounded border border-indigo-500 hover:border-indigo-400 transition flex items-center gap-2 font-bold" title="나중에 다시 편집할 수 있도록 저장">
+                <i class="fa-solid fa-file-export"></i> 프로젝트 저장
             </button>
+            <label class="h-8 px-3 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs rounded border border-slate-600 hover:border-slate-500 transition flex items-center gap-2 font-bold cursor-pointer">
+                <i class="fa-solid fa-file-import"></i> 불러오기
+                <input type="file" id="projectInput" accept=".json" class="hidden" onchange="importProject(this)">
+            </label>
+            
+            <div class="w-px h-4 bg-slate-800 my-auto mx-1"></div>
 
-            <div class="h-6 w-px bg-slate-700 mx-2"></div>
-
-            <button onclick="clearAllCharacters()" class="h-9 w-9 flex items-center justify-center bg-slate-700 hover:bg-red-900/80 hover:text-red-200 text-slate-300 rounded-lg transition" title="전체 초기화">
+            <button onclick="clearAllCharacters()" class="h-8 w-8 flex items-center justify-center hover:bg-slate-800 text-slate-400 hover:text-red-400 rounded transition" title="전체 초기화">
                 <i class="fa-solid fa-rotate-right"></i>
             </button>
-            <button onclick="downloadCanvas()" class="h-9 px-4 bg-green-700 hover:bg-green-600 text-white rounded-lg text-sm transition shadow-lg flex items-center gap-2 font-bold hover:shadow-[0_0_15px_rgba(22,163,74,0.4)]">
-                <i class="fa-solid fa-camera"></i> <span class="hidden md:inline">스냅샷</span>
+            <button onclick="downloadCanvas()" class="h-8 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded border border-slate-700 hover:border-slate-500 transition flex items-center gap-2 font-bold">
+                <i class="fa-solid fa-camera"></i> 스냅샷
             </button>
         </div>
     </header>
 
     <!-- Main Workspace -->
-    <div class="flex-1 flex overflow-hidden p-4 gap-4">
+    <div class="flex-1 flex overflow-hidden">
         
-        <!-- Left: Canvas Area (Flex Grow) -->
-        <div id="canvasContainer" class="flex-1 bg-slate-950/50 rounded-xl overflow-hidden shadow-2xl border border-slate-700 relative group flex items-center justify-center">
-            <!-- Background Grid Pattern -->
-            <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(#475569 1px, transparent 1px); background-size: 20px 20px;"></div>
-            
-            <canvas id="mainCanvas" class="shadow-2xl max-w-full max-h-full transition-transform duration-300"></canvas>
-            
-            <div id="overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm text-center p-6 transition-opacity duration-500 z-10 pointer-events-none">
-                <div class="glass-panel p-8 text-white max-w-lg border-t-4 border-red-500 pointer-events-auto transform transition hover:scale-105 duration-300">
-                    <h3 class="text-3xl font-bold mb-4 text-red-500 christmas-font tracking-wider">Start Creating</h3>
-                    <div class="text-left space-y-3 text-sm text-slate-300">
-                        <p class="flex items-center"><span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center mr-3 text-xs font-bold">1</span>배경과 타이틀을 설정하세요.</p>
-                        <p class="flex items-center"><span class="w-6 h-6 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center mr-3 text-xs font-bold">2</span><span class="text-yellow-300">장식(Decor)</span>과 캐릭터를 배치하세요.</p>
-                        <p class="flex items-center"><span class="w-6 h-6 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center mr-3 text-xs font-bold">3</span>GIF 또는 WebM으로 녹화하여 공유하세요!</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Recording Indicators -->
-            <div class="absolute top-4 left-4 flex gap-2 pointer-events-none">
-                <span id="recordingStatus" class="hidden px-3 py-1 bg-red-500/90 text-white rounded text-xs font-bold animate-pulse shadow-lg flex items-center gap-2">
-                    <i class="fa-solid fa-circle text-[8px]"></i> RECORDING
-                </span>
-            </div>
-            
-            <div class="absolute bottom-4 right-4 px-3 py-1 bg-black/60 backdrop-blur rounded-full text-[10px] text-slate-400 font-mono pointer-events-none border border-white/10">
-                <span id="resolutionDisplay">Checking Resolution...</span>
+        <!-- [LEFT] Assets Panel -->
+        <aside class="w-80 shrink-0 flex flex-col border-r border-white/5 bg-slate-900/50 backdrop-blur-sm z-20">
+            <div class="p-4 pb-2">
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1"><i class="fa-solid fa-layer-group mr-1"></i> 에셋 라이브러리</h2>
             </div>
 
-            <!-- Processing Overlay -->
-            <div id="processingOverlay" class="hidden absolute inset-0 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center z-50">
-                <div class="relative">
-                    <div class="w-16 h-16 border-4 border-slate-700 border-t-yellow-400 rounded-full animate-spin"></div>
-                    <i class="fa-solid fa-file-export absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-500"></i>
-                </div>
-                <div class="text-white text-xl font-bold mt-4">Processing Output</div>
-                <div class="text-slate-400 text-sm mt-2">GIF 변환 중입니다 (시간이 소요될 수 있습니다)...</div>
-            </div>
-        </div>
-
-        <!-- Right: Controls Panel (Fixed Width) -->
-        <div class="w-[400px] shrink-0 flex flex-col gap-4 overflow-hidden">
-            
-            <!-- 1. Environment Settings -->
-            <div class="glass-panel p-4 shrink-0 flex flex-col gap-3 transition-all duration-300" id="envPanel">
-                <div class="flex justify-between items-center border-b border-slate-700 pb-2 mb-1 cursor-pointer select-none group" onclick="toggleSection('env')">
-                    <div class="flex items-center gap-2">
-                        <i id="envChevron" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform group-hover:text-white"></i>
-                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest group-hover:text-white transition">
-                            <i class="fa-solid fa-sliders mr-1"></i> Environment
-                        </h3>
-                    </div>
-                    <label class="cursor-pointer text-xs text-blue-400 hover:text-blue-300 transition font-bold flex items-center gap-1" onclick="event.stopPropagation()">
-                        <i class="fa-regular fa-image"></i> 배경 변경
-                        <input type="file" id="bgInput" accept="image/*" class="hidden">
-                    </label>
-                </div>
-                
-                <div id="envContent" class="grid grid-cols-2 gap-3 transition-all duration-300">
-                    <!-- Title Setting -->
-                    <div class="col-span-2 bg-slate-800/50 p-2.5 rounded border border-slate-700 hover:border-slate-600 transition group">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-[11px] font-bold text-yellow-500 group-hover:text-yellow-400 transition"><i class="fa-solid fa-heading mr-1"></i>Title Object</span>
-                            <label class="cursor-pointer text-[10px] bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-0.5 rounded transition">
-                                Upload
-                                <input type="file" id="titleInput" accept="image/*" class="hidden">
-                            </label>
-                        </div>
-                        <select id="titleStyle" class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1.5 text-xs text-white focus:border-yellow-500 transition">
-                            <!-- Options generated by JS -->
-                        </select>
-                        <div id="titleParamsContainer" class="mt-2 pt-2 border-t border-slate-700/50 hidden space-y-2">
-                            <!-- Dynamic Sliders -->
-                        </div>
-                    </div>
-
-                    <!-- Aspect Ratio -->
-                    <div class="space-y-1">
-                        <label class="text-[10px] text-slate-500 font-bold block">비율 (Aspect Ratio)</label>
-                        <select id="aspectRatio" class="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1.5 text-xs text-white outline-none hover:border-slate-500 transition">
-                            <option value="auto">Auto Fill</option>
-                            <option value="1:1">1:1 Square</option>
-                            <option value="4:5">4:5 Portrait</option>
-                            <option value="9:16">9:16 Story</option>
-                            <option value="16:9">16:9 HD</option>
-                        </select>
-                    </div>
-
-                    <!-- Snow Toggle -->
-                    <div class="space-y-1">
-                         <div class="flex justify-between items-center">
-                            <label class="text-[10px] text-slate-500 font-bold block">눈 효과 (Snow)</label>
-                            <button id="snowSettingsBtn" onclick="toggleSnowSettings()" class="text-[10px] text-slate-400 hover:text-white transition" title="설정">
-                                <i class="fa-solid fa-gear"></i>
-                            </button>
-                         </div>
-                        <div class="flex items-center h-[26px] px-2 bg-slate-800 border border-slate-600 rounded hover:border-slate-500 transition">
-                             <input type="checkbox" id="snowToggle" checked class="w-3.5 h-3.5 accent-blue-500">
-                             <span class="text-[10px] text-slate-300 ml-2">Enable</span>
-                        </div>
-                    </div>
-
-                    <!-- Snow Settings Panel (Collapsible) -->
-                    <div id="snowSettingsPanel" class="col-span-2 hidden bg-slate-900/80 rounded p-3 border border-slate-700 grid grid-cols-2 gap-2 animate-fade-in-down">
-                        <div class="col-span-2 text-[10px] font-bold text-slate-500 border-b border-slate-700 pb-1 mb-1">Snow Detail</div>
-                        <div class="flex flex-col gap-1"><span class="text-[9px] text-slate-400">개수 (Count)</span><input type="range" min="10" max="500" value="150" oninput="updateSnowConfig('count', this.value)" class="w-full"></div>
-                        <div class="flex flex-col gap-1"><span class="text-[9px] text-slate-400">속도 (Speed)</span><input type="range" min="0.1" max="5.0" step="0.1" value="1.0" oninput="updateSnowConfig('speed', this.value)" class="w-full"></div>
-                        <div class="flex flex-col gap-1"><span class="text-[9px] text-slate-400">바람 (Wind)</span><input type="range" min="-3.0" max="3.0" step="0.1" value="0.0" oninput="updateSnowConfig('wind', this.value)" class="w-full"></div>
-                        <div class="flex flex-col gap-1"><span class="text-[9px] text-slate-400">크기 (Size)</span><input type="range" min="0.5" max="3.0" step="0.1" value="1.0" oninput="updateSnowConfig('size', this.value)" class="w-full"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2. Decorations List -->
-            <div class="glass-panel flex-none flex flex-col overflow-hidden max-h-[30vh] transition-all duration-300" id="decorPanel">
-                <div class="p-3 border-b border-white/5 bg-slate-800/30 flex justify-between items-center shrink-0 cursor-pointer select-none group" onclick="toggleSection('decor')">
-                    <div class="flex items-center gap-2">
-                        <i id="decorChevron" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform group-hover:text-white"></i>
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest group-hover:text-white transition">
-                            <i class="fa-solid fa-tree mr-1"></i> Decorations
-                        </span>
-                        <span id="decorCount" class="px-1.5 py-0.5 bg-slate-700 rounded text-[10px] text-slate-300 font-mono">0</span>
-                    </div>
-                    
-                    <label class="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white text-xs px-3 py-1.5 rounded-full shadow-lg transition hover:shadow-blue-500/30 flex items-center gap-1 font-bold" onclick="event.stopPropagation()">
-                        <i class="fa-solid fa-upload"></i> 추가
-                        <input type="file" id="decorInput" accept="image/*" multiple class="hidden">
-                    </label>
-                </div>
-                
-                <div id="decorList" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
-                    <div id="emptyDecor" class="h-full flex flex-col items-center justify-center text-slate-600 space-y-2 opacity-60 py-4">
-                        <i class="fa-regular fa-image text-xl"></i>
-                        <p class="text-[10px]">No Decorations</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. Character List -->
-            <div class="glass-panel flex-1 overflow-hidden flex flex-col">
-                <div class="p-3 border-b border-white/5 bg-slate-800/30 flex justify-between items-center shrink-0">
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                            <i class="fa-solid fa-users mr-1"></i> Characters
-                        </span>
-                        <span id="charCount" class="px-1.5 py-0.5 bg-slate-700 rounded text-[10px] text-slate-300 font-mono">0/10</span>
-                    </div>
-                    
-                    <label class="cursor-pointer bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1.5 rounded-full shadow-lg transition hover:shadow-red-500/30 flex items-center gap-1 font-bold">
+            <!-- Characters -->
+            <div class="flex-1 flex flex-col overflow-hidden min-h-0 border-b border-white/5">
+                <div class="px-4 py-2 bg-slate-800/30 flex justify-between items-center shrink-0">
+                    <span class="text-xs font-bold text-slate-300">캐릭터 <span id="charCount" class="ml-1 text-[10px] text-slate-500 font-mono">0/10</span></span>
+                    <label class="cursor-pointer bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] px-2 py-1 rounded shadow-lg transition flex items-center gap-1 font-bold">
                         <i class="fa-solid fa-plus"></i> 추가
                         <input type="file" id="charInput" accept="image/*" multiple class="hidden">
                     </label>
                 </div>
-                
                 <div id="charList" class="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar">
                     <div id="emptyState" class="h-full flex flex-col items-center justify-center text-slate-600 space-y-3 opacity-60">
-                        <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center text-2xl">
-                            <i class="fa-solid fa-user-astronaut"></i>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-sm font-bold">No Characters</p>
-                            <p class="text-xs mt-1">상단의 '+ 추가' 버튼을 눌러<br>이미지를 업로드하세요.</p>
+                        <i class="fa-solid fa-user-astronaut text-3xl mb-2"></i>
+                        <div class="text-center text-xs">
+                            <p>등록된 캐릭터 없음</p>
+                            <p class="mt-1 text-slate-500">이미지를 업로드하여 애니메이션을 시작하세요.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-        </div>
-    </div>
-
-    <!-- Scripts (Core Logic Preserved) -->
-    <script>
-        const canvas = document.getElementById('mainCanvas');
-        const canvasContainer = document.getElementById('canvasContainer');
-        const ctx = canvas.getContext('2d');
-        const overlay = document.getElementById('overlay');
-        const resolutionDisplay = document.getElementById('resolutionDisplay');
-        const emptyState = document.getElementById('emptyState');
-        const emptyDecor = document.getElementById('emptyDecor');
-        const bgInput = document.getElementById('bgInput');
-        const charInput = document.getElementById('charInput');
-        const decorInput = document.getElementById('decorInput');
-        const titleInput = document.getElementById('titleInput');
-        const titleStyleSelect = document.getElementById('titleStyle');
-        const titleParamsContainer = document.getElementById('titleParamsContainer');
-        const aspectRatioSelect = document.getElementById('aspectRatio');
-        const snowToggle = document.getElementById('snowToggle');
-        const charListContainer = document.getElementById('charList');
-        const decorListContainer = document.getElementById('decorList');
-        const charCountLabel = document.getElementById('charCount');
-        const decorCountLabel = document.getElementById('decorCount');
-        const snowSettingsPanel = document.getElementById('snowSettingsPanel');
-        
-        // --- Toggle Section Logic ---
-        window.toggleSection = (id) => {
-            if (id === 'env') {
-                const content = document.getElementById('envContent');
-                const chevron = document.getElementById('envChevron');
-                content.classList.toggle('hidden');
-                if (content.classList.contains('hidden')) {
-                    chevron.classList.replace('fa-chevron-down', 'fa-chevron-right');
-                } else {
-                    chevron.classList.replace('fa-chevron-right', 'fa-chevron-down');
-                }
-            } else if (id === 'decor') {
-                const list = document.getElementById('decorList');
-                const chevron = document.getElementById('decorChevron');
-                list.classList.toggle('hidden');
-                if (list.classList.contains('hidden')) {
-                    chevron.classList.replace('fa-chevron-down', 'fa-chevron-right');
-                    // Shrink parent container to fit header only
-                    document.getElementById('decorPanel').style.maxHeight = 'fit-content';
-                } else {
-                    chevron.classList.replace('fa-chevron-right', 'fa-chevron-down');
-                    // Restore max height
-                    document.getElementById('decorPanel').style.maxHeight = '30vh';
-                }
-            }
-        };
-
-        // Recorder Elements
-        const recordFormat = document.getElementById('recordFormat');
-        const recordBtn = document.getElementById('recordBtn');
-        const recordIcon = document.getElementById('recordIcon');
-        const recordText = document.getElementById('recordText');
-        const recordingStatus = document.getElementById('recordingStatus');
-        const processingOverlay = document.getElementById('processingOverlay');
-
-        let bgImage = null;
-        let titleEntity = null;
-        let characters = []; 
-        let decorations = []; // Store decorations
-        const MAX_CHARS = 10;
-        let snowflakes = [];
-        let tick = 0;
-        
-        let snowConfig = { count: 150, speed: 1.0, wind: 0.0, size: 1.0 };
-        
-        // Recorder State
-        let mediaRecorder;
-        let recordedChunks = [];
-        let isRecording = false;
-        let recordingStartTime = 0;
-        let recordingInterval = null;
-        
-        // GIF State
-        let gifInstance = null;
-        let gifIntervalId = null;
-        const GIF_FPS = 30; // Increased FPS for smoother GIF
-        const GIF_DELAY = 1000 / GIF_FPS;
-
-        const MAX_TIME_WEBM = 60000;
-        const MAX_TIME_GIF = 10000; // GIF는 용량 문제로 10초로 제한 권장
-
-        // --- Styles Definitions ---
-        const STYLE_DEF = {
-            walk: { label: "1. 총총 걷기 (Walk)", params: [{key:'stepHeight', label:'높이', min:0, max:20, step:1, def:5}, {key:'stepFreq', label:'빈도', min:0.2, max:3.0, step:0.1, def:1.0}] }, 
-            bounce: { label: "2. 통통 튀기 (Bounce)", params: [{key:'jumpHeight', label:'높이', min:0.5, max:4.0, step:0.1, def:1.5}, {key:'squash', label:'탄력', min:0, max:0.4, step:0.01, def:0.1}] }, 
-            wobble: { label: "3. 뒤뚱뒤뚱 (Wobble)", params: [{key:'tiltAngle', label:'각도', min:0.05, max:1.0, step:0.05, def:0.2}, {key:'waddleSpeed', label:'속도', min:0.05, max:1.0, step:0.05, def:0.2}] }, 
-            float: { label: "4. 둥둥 떠다니기 (Float)", params: [{key:'altitude', label:'고도', min:0.1, max:0.9, step:0.01, def:0.4}, {key:'waveAmp', label:'범위', min:0, max:100, step:1, def:20}] }, 
-            roll: { label: "5. 데굴데굴 (Roll)", params: [{key:'spinSpeed', label:'회전', min:0.5, max:5.0, step:0.1, def:2.0}] }, 
-            sleigh: { label: "6. 썰매 타기 (Sleigh)", params: [{key:'altitude', label:'고도', min:0.1, max:0.9, step:0.01, def:0.5}, {key:'waveAmp', label:'굴곡', min:0, max:100, step:1, def:30}] }, 
-            zoom: { label: "7. 주인공 (Zoom)", params: [{key:'maxScale', label:'확대', min:1.1, max:3.0, step:0.1, def:1.5}, {key:'pulseSpeed', label:'속도', min:0.01, max:0.2, step:0.01, def:0.05}] }, 
-            panic: { label: "8. 허둥지둥 (Panic)", params: [{key:'jitterRange', label:'떨림', min:1, max:30, step:1, def:10}, {key:'panicSpeed', label:'속도', min:1.0, max:5.0, step:0.1, def:3.0}] }, 
-            teleport: { label: "9. 순간이동 (Teleport)", params: [{key:'interval', label:'빈도', min:0.005, max:0.1, step:0.001, def:0.02}, {key:'alphaSpeed', label:'깜빡임', min:0.01, max:0.5, step:0.01, def:0.1}] },
-            moonwalk: { label: "10. 문워크 (Moonwalk)", params: [{key:'stepHeight', label:'스텝', min:0, max:20, step:1, def:5}] }, 
-            ceiling: { label: "11. 거꾸로 걷기 (Ceiling)", params: [{key:'offset', label:'여백', min:-100, max:150, step:1, def:10}] }, 
-            wall: { label: "12. 벽타기 (Wall)", params: [{key:'offset', label:'거리', min:0, max:100, step:1, def:0}] }, 
-            ghost: { label: "13. 유령 (Ghost)", params: [{key:'fadeMin', label:'투명', min:0.0, max:0.8, step:0.01, def:0.2}, {key:'fadeSpd', label:'깜빡임', min:0.01, max:0.2, step:0.01, def:0.05}] },
-            jelly: { label: "14. 젤리 (Jelly)", params: [{key:'amount', label:'말랑', min:0.0, max:0.5, step:0.01, def:0.2}, {key:'spd', label:'속도', min:0.05, max:0.5, step:0.01, def:0.2}] }, 
-            drunk: { label: "15. 취한 걸음 (Drunk)", params: [{key:'sway', label:'비틀', min:0.1, max:2.0, step:0.1, def:0.8}] } 
-        };
-
-        const TITLE_STYLE_DEF = {
-            pulse: { label: "1. 두근두근 (Heartbeat)", params: [{key:'spd', label:'심박수', min:0.05, max:0.3, step:0.01, def:0.15}, {key:'amp', label:'크기 변화', min:0.01, max:0.3, step:0.01, def:0.1}] },
-            jelly: { label: "2. 젤리 바운스 (Jelly)", params: [{key:'spd', label:'탄성 속도', min:0.05, max:0.3, step:0.01, def:0.15}, {key:'amp', label:'말랑함', min:0.05, max:0.3, step:0.01, def:0.15}] },
-            spinY: { label: "3. 3D 회전 (Coin Spin)", params: [{key:'spd', label:'회전 속도', min:0.01, max:0.2, step:0.01, def:0.05}] },
-            ghost: { label: "4. 유령 (Ghost)", params: [{key:'spd', label:'부유 속도', min:0.01, max:0.1, step:0.01, def:0.05}, {key:'alpha', label:'투명도', min:0.1, max:0.8, step:0.01, def:0.3}] },
-            glitch: { label: "5. 글리치 (Cyber)", params: [{key:'freq', label:'빈도', min:0.01, max:0.5, step:0.01, def:0.1}, {key:'amp', label:'파괴력', min:1, max:30, step:1, def:10}] },
-            spot_stage: { label: "6. 서치라이트 (Stage)", params: [{key:'spd', label:'회전 속도', min:0.01, max:0.1, step:0.01, def:0.03}, {key:'width', label:'빛 크기', min:30, max:200, step:1, def:100}, {key:'count', label:'조명 개수', min:1, max:10, step:1, def:2}] },
-            spot_random: { label: "7. 랜덤 포커스 (Random)", params: [{key:'spd', label:'이동 반응', min:0.01, max:0.2, step:0.01, def:0.05}, {key:'width', label:'빛 크기', min:30, max:200, step:1, def:80}] },
-            spot_pulse: { label: "8. 센터 펄스 (Pulse Light)", params: [{key:'spd', label:'펄스 속도', min:0.05, max:0.3, step:0.01, def:0.1}, {key:'width', label:'최대 크기', min:100, max:400, step:1, def:250}] },
-            quake: { label: "9. 지진 (Quake)", params: [{key:'amp', label:'강도', min:1, max:20, step:1, def:5}, {key:'spd', label:'빈도', min:0.5, max:2.0, step:0.1, def:1.0}] },
-            wave: { label: "10. 리퀴드 웨이브 (Wave)", params: [{key:'spd', label:'물결 속도', min:0.05, max:0.3, step:0.01, def:0.1}, {key:'amp', label:'물결 높이', min:1, max:20, step:1, def:5}] },
-            pendulum: { label: "11. 시계추 (Swing)", params: [{key:'spd', label:'왕복 속도', min:0.01, max:0.1, step:0.01, def:0.04}, {key:'angle', label:'각도', min:0.05, max:0.5, step:0.01, def:0.15}] },
-            zoom: { label: "12. 줌인 (Zoom In)", params: [{key:'spd', label:'반복 속도', min:0.01, max:0.1, step:0.01, def:0.03}, {key:'scale', label:'확대 범위', min:1.1, max:2.0, step:0.1, def:1.5}] },
-            starlight: { label: "13. 별가루 (Stardust)", params: [{key:'spd', label:'반짝임', min:0.01, max:0.2, step:0.01, def:0.05}, {key:'count', label:'별 개수', min:5, max:50, step:1, def:15}, {key:'size', label:'별 크기', min:0.5, max:3.0, step:0.1, def:1.0}, {key:'hue', label:'색상', min:0, max:360, step:10, def:60}] },
-            neon: { label: "14. 네온 사인 (Neon)", params: [{key:'spd', label:'깜빡임', min:0.05, max:0.5, step:0.01, def:0.1}, {key:'intensity', label:'빛 강도', min:5, max:50, step:1, def:20}, {key:'hue', label:'색상', min:0, max:360, step:10, def:300}] },
-            glow: { label: "15. 후광 (Backlight)", params: [{key:'spd', label:'숨쉬기', min:0.01, max:0.1, step:0.01, def:0.03}, {key:'size', label:'후광 크기', min:10, max:100, step:1, def:40}, {key:'hue', label:'색상', min:0, max:360, step:10, def:50}] }
-        };
-
-        // --- Decoration Styles ---
-        const DECOR_STYLE_DEF = {
-            normal: { label: "1. 기본 (Normal)" },
-            warm_light: { label: "2. 따뜻한 빛 (Warm Light)" },
-            cold_light: { label: "3. 차가운 빛 (Cold Light)" },
-            neon: { label: "4. 네온 사인 (Neon)" },
-            twinkle: { label: "5. 반짝임 (Twinkle)" },
-            silhouette: { label: "6. 실루엣 (Silhouette)" },
-            ghost: { label: "7. 유령 (Ghost)" },
-            breathe: { label: "8. 숨쉬기 (Breathe)" },
-            float: { label: "9. 둥둥 (Float)" },
-            swing: { label: "10. 흔들흔들 (Swing)" },
-            spin: { label: "11. 빙글빙글 (Spin)" },
-            jelly: { label: "12. 젤리 (Jelly)" },
-        };
-
-        // --- Decoration Class ---
-        class Decoration {
-            constructor(id, image, name) {
-                this.id = id;
-                this.image = image;
-                this.name = name;
-                this.x = 0.5; // Normalized X (0-1)
-                this.y = 0.5; // Normalized Y (0-1)
-                this.scale = 1.0;
-                this.rotation = 0; // Degrees
-                this.style = 'normal';
-            }
-            
-            draw(ctx, canvasWidth, canvasHeight) {
-                const drawW = (this.image.width * this.scale) * (canvasHeight * 0.0015); // Adjust relative to height
-                const aspectRatio = this.image.width / this.image.height;
-                const drawH = drawW / aspectRatio;
-                
-                const posX = this.x * canvasWidth;
-                const posY = this.y * canvasHeight;
-
-                ctx.save();
-                
-                // --- Apply Style Effects ---
-                let renderScaleX = 1, renderScaleY = 1;
-                let renderRotation = this.rotation * Math.PI / 180;
-                let renderX = posX;
-                let renderY = posY;
-                let renderAlpha = 1;
-
-                switch(this.style) {
-                    case 'warm_light':
-                        ctx.shadowBlur = 30; ctx.shadowColor = 'orange'; ctx.globalCompositeOperation = 'lighter';
-                        break;
-                    case 'cold_light':
-                        ctx.shadowBlur = 30; ctx.shadowColor = 'cyan'; ctx.globalCompositeOperation = 'lighter';
-                        break;
-                    case 'neon':
-                        ctx.shadowBlur = 20; 
-                        ctx.shadowColor = `hsl(${tick * 2 % 360}, 100%, 50%)`;
-                        break;
-                    case 'twinkle':
-                        renderAlpha = 0.5 + Math.sin(tick * 0.1 + this.x * 10) * 0.4;
-                        ctx.globalCompositeOperation = 'lighter';
-                        break;
-                    case 'silhouette':
-                        ctx.filter = 'brightness(0%)';
-                        break;
-                    case 'ghost':
-                        renderAlpha = 0.6;
-                        renderY += Math.sin(tick * 0.05) * 10;
-                        break;
-                    case 'breathe':
-                        const breath = 1 + Math.sin(tick * 0.05) * 0.1;
-                        renderScaleX = breath; renderScaleY = breath;
-                        break;
-                    case 'float':
-                        renderY += Math.sin(tick * 0.05) * 15;
-                        break;
-                    case 'swing':
-                        renderRotation += Math.sin(tick * 0.05) * 0.2;
-                        break;
-                    case 'spin':
-                        renderRotation += tick * 0.05;
-                        break;
-                    case 'jelly':
-                        const sq = Math.sin(tick * 0.2) * 0.1;
-                        renderScaleY = 1 + sq; renderScaleX = 1 - sq;
-                        break;
-                }
-
-                ctx.translate(renderX, renderY);
-                ctx.rotate(renderRotation);
-                ctx.scale(renderScaleX, renderScaleY);
-                ctx.globalAlpha = renderAlpha;
-                
-                ctx.drawImage(this.image, -drawW / 2, -drawH / 2, drawW, drawH);
-                
-                ctx.restore();
-            }
-        }
-
-        // --- Title & Character Classes ---
-        class TitleEntity {
-            constructor(image) {
-                this.image = image;
-                this.style = 'pulse';
-                this.customParams = {};
-                this.setStyle('pulse');
-                this.stars = Array(100).fill().map(() => ({ x: Math.random(), y: Math.random(), a: Math.random() * Math.PI * 2, spd: 0.02 + Math.random() * 0.05, r: 1 + Math.random() * 2 }));
-                this.randTarget = { x: 0, y: 0 };
-                this.randCurrent = { x: 0, y: 0 };
-            }
-            setStyle(styleName) {
-                this.style = styleName;
-                this.customParams = {};
-                if (TITLE_STYLE_DEF[styleName]) { TITLE_STYLE_DEF[styleName].params.forEach(p => { this.customParams[p.key] = p.def; }); }
-            }
-            drawSpotlight(ctx, x, y, radius) {
-                let g = ctx.createRadialGradient(x, y, 0, x, y, radius);
-                g.addColorStop(0, 'rgba(255, 255, 255, 0.8)'); g.addColorStop(0.5, 'rgba(255, 255, 255, 0.4)'); g.addColorStop(1, 'rgba(255, 255, 255, 0)');
-                ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
-            }
-            draw(ctx, canvasWidth, canvasHeight) {
-                let targetW = Math.min(canvasWidth * 0.6, 500);
-                let ratio = this.image.width / this.image.height;
-                let targetH = targetW / ratio;
-                let anchorX = canvasWidth / 2;
-                let anchorY = canvasHeight * 0.15; 
-                let renderX = anchorX, renderY = anchorY, rotation = 0, scaleX = 1, scaleY = 1, alpha = 1, filter = 'none', shadowBlur = 0, shadowColor = 'transparent', globalComposite = 'source-over';
-                const P = this.customParams;
-
-                switch(this.style) {
-                    case 'pulse': let pulse = 1 + Math.sin(tick * (P.spd||0.15)) * (P.amp||0.1); scaleX = pulse; scaleY = pulse; break;
-                    case 'jelly': scaleX = 1 + Math.sin(tick * (P.spd||0.15)) * (P.amp||0.15); scaleY = 1 - Math.sin(tick * (P.spd||0.15)) * (P.amp||0.15); break;
-                    case 'spinY': scaleX = Math.cos(tick * (P.spd||0.05)); break;
-                    case 'ghost': renderY += Math.sin(tick * (P.spd||0.05)) * 10; alpha = 0.5 + Math.sin(tick * 0.03) * 0.2; break;
-                    case 'glitch': if(Math.random() < (P.freq||0.1)) { renderX += (Math.random()-0.5) * (P.amp||10); renderY += (Math.random()-0.5) * (P.amp||10); filter = `hue-rotate(${Math.random()*360}deg) contrast(150%)`; } break;
-                    case 'quake': renderX += (Math.random()-0.5) * (P.amp||5); renderY += (Math.random()-0.5) * (P.amp||5); break;
-                    case 'pendulum': rotation = Math.sin(tick * (P.spd||0.04)) * (P.angle||0.15); break;
-                    case 'zoom': let zPhase = (tick * (P.spd||0.03)) % Math.PI; let zScale = 1 + Math.sin(zPhase) * ((P.scale||1.5) - 1); scaleX = zScale; scaleY = zScale; alpha = 1 - (zPhase / Math.PI) * 0.5; break;
-                    case 'neon': if(Math.random() < (P.spd||0.1)) alpha = 0.5 + Math.random() * 0.5; shadowBlur = P.intensity || 20; shadowColor = `hsla(${P.hue||300}, 100%, 50%, 1)`; globalComposite = 'lighter'; break;
-                    case 'glow': let breath = (Math.sin(tick * (P.spd||0.03)) + 1) / 2; shadowBlur = (P.size||40) * (0.5 + breath * 0.5); shadowColor = `hsla(${P.hue||50}, 100%, 60%, 0.8)`; break;
-                }
-
-                ctx.save();
-                let pivotY = (this.style !== 'pendulum') ? targetH / 2 : 0;
-                ctx.translate(renderX, renderY + pivotY); ctx.rotate(rotation); ctx.scale(scaleX, scaleY); ctx.globalAlpha = alpha;
-                if(filter !== 'none') ctx.filter = filter;
-                if (shadowBlur > 0) { ctx.shadowBlur = shadowBlur; ctx.shadowColor = shadowColor; }
-                if (globalComposite !== 'source-over') { ctx.globalCompositeOperation = globalComposite; }
-
-                let drawX = -targetW / 2; let drawY = -pivotY;
-
-                if(this.style === 'wave') {
-                    const slices = 20; const sliceH = targetH / slices; const waveAmp = P.amp || 5; const waveSpd = P.spd || 0.1;
-                    for(let i=0; i<slices; i++) { let sy = i * (this.image.height / slices); let sh = this.image.height / slices; let dy = drawY + i * sliceH; let offset = Math.sin((tick * waveSpd) + (i * 0.5)) * waveAmp; ctx.drawImage(this.image, 0, sy, this.image.width, sh, drawX + offset, dy, targetW, sliceH); }
-                } else {
-                    ctx.drawImage(this.image, drawX, drawY, targetW, targetH);
-                    if (this.style === 'neon') { ctx.globalCompositeOperation = 'source-over'; ctx.shadowBlur = 0; ctx.drawImage(this.image, drawX, drawY, targetW, targetH); }
-                }
-
-                if(this.style === 'spot_stage') {
-                    ctx.globalCompositeOperation = 'source-atop'; ctx.shadowBlur = 0;
-                    let count = P.count || 2; let r = P.width || 100; let spd = P.spd || 0.03;
-                    for(let i=0; i<count; i++) { let angle = (tick * spd) + (i * (Math.PI * 2 / count)); let sx = Math.cos(angle) * (targetW * 0.5); let sy = Math.sin(angle) * (targetH * 0.8); this.drawSpotlight(ctx, sx, sy, r); }
-                } else if (this.style === 'spot_random') {
-                    ctx.globalCompositeOperation = 'source-atop'; ctx.shadowBlur = 0;
-                    let r = P.width || 80; let spd = P.spd || 0.05;
-                    if(Math.random() < 0.02) { this.randTarget.x = (Math.random() - 0.5) * targetW * 2; this.randTarget.y = (Math.random() - 0.5) * targetH * 2; }
-                    let dx = this.randTarget.x - this.randCurrent.x; let dy = this.randTarget.y - this.randCurrent.y; this.randCurrent.x += dx * spd; this.randCurrent.y += dy * spd;
-                    this.drawSpotlight(ctx, this.randCurrent.x, this.randCurrent.y, r);
-                } else if(this.style === 'spot_pulse') {
-                    ctx.globalCompositeOperation = 'source-atop'; ctx.shadowBlur = 0;
-                    let r = P.width || 250; let spd = P.spd || 0.1; let pr = r * (0.5 + Math.sin(tick * spd)*0.5); this.drawSpotlight(ctx, 0, 0, pr);
-                }
-
-                if(this.style === 'starlight') {
-                    ctx.globalCompositeOperation = 'lighter'; ctx.shadowBlur = 0;
-                    const hue = P.hue || 60; const baseSize = P.size || 1.0;
-                    for(let i=0; i < (P.count||10); i++) {
-                        let star = this.stars[i]; star.a += star.spd * (P.spd ? P.spd * 20 : 1);
-                        let sAlpha = 0.2 + (Math.sin(star.a) + 1) / 2 * 0.8;
-                        let sx = drawX + star.x * targetW; let sy = drawY + star.y * targetH;
-                        ctx.fillStyle = `hsla(${hue}, 100%, 80%, ${sAlpha})`; ctx.shadowColor = `hsla(${hue}, 100%, 50%, ${sAlpha})`; ctx.shadowBlur = 10 * baseSize;
-                        let r = (star.r || 1) * baseSize; ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0; 
-                    }
-                }
-                ctx.restore();
-            }
-        }
-
-        class Character {
-            constructor(id, image, name) { 
-                this.id = id; 
-                this.image = image; 
-                this.name = name; 
-                this.x = Math.random() * (canvas.width - 100); 
-                this.y = 0; 
-                this.direction = Math.random() > 0.5 ? 1 : -1; 
-                this.tick = Math.random() * 1000; 
-                this.speed = 2.0; 
-                this.scale = 1.0; 
-                this.isClamped = false; // New property for clamping
-                this.setStyle('walk'); 
-            }
-            setStyle(styleName) { this.style = styleName; this.customParams = {}; if (STYLE_DEF[styleName]) { STYLE_DEF[styleName].params.forEach(p => this.customParams[p.key] = p.def); } }
-            updateAndDraw(ctx, canvasWidth, canvasHeight) {
-                const baseSize = canvasHeight * 0.15; const aspectRatio = this.image.width / this.image.height; const drawH = baseSize * this.scale; const drawW = drawH * aspectRatio;
-                this.tick++; const P = this.customParams;
-                let speedMultiplier = 1; if (['sleigh', 'wall'].includes(this.style)) speedMultiplier = 1.5; if (['panic', 'drunk'].includes(this.style)) speedMultiplier = P.panicSpeed || 2.5; if (['teleport', 'zoom', 'wall'].includes(this.style)) speedMultiplier = 0; 
-                const moveSpeed = (canvasWidth * 0.002) * this.speed * speedMultiplier;
-                if (!['zoom', 'wall'].includes(this.style)) { this.x += moveSpeed * this.direction; }
-                if (this.style !== 'wall') { if (this.direction === 1 && this.x > canvasWidth - drawW) { this.direction = -1; this.x = canvasWidth - drawW; } else if (this.direction === -1 && this.x < 0) { this.direction = 1; this.x = 0; } }
-                let groundY = canvasHeight - drawH - (canvasHeight * 0.02); let renderX = this.x; let renderY = groundY; let rotation = 0; let scaleX = 1; let scaleY = 1; let alpha = 1;
-                switch(this.style) {
-                    case 'walk': renderY += Math.sin(this.tick * 0.2 * (P.stepFreq||1)) * (P.stepHeight||5); rotation = Math.sin(this.tick * 0.1 * (P.stepFreq||1)) * 0.05; break;
-                    case 'bounce': const bPhase = Math.abs(Math.sin(this.tick * 0.1)); renderY -= bPhase * (drawH * (P.jumpHeight||1.5)); if (bPhase < 0.2) { scaleY = 1 - (P.squash||0.05); scaleX = 1 + (P.squash||0.05); } break;
-                    case 'wobble': rotation = Math.sin(this.tick * (P.waddleSpeed||0.2)) * (P.tiltAngle||0.2); break;
-                    case 'float': renderY = (canvasHeight - ((P.altitude||0.3)*canvasHeight)) + Math.sin(this.tick * 0.05) * (P.waveAmp||30); alpha = 0.9; break;
-                    case 'roll': renderY = groundY; rotation = (this.x / (drawW * Math.PI)) * Math.PI * 2 * (P.spinSpeed||2); break;
-                    case 'sleigh': renderY = (canvasHeight - ((P.altitude||0.5)*canvasHeight)) + Math.sin(this.tick * 0.05) * (P.waveAmp||50); rotation = Math.sin(this.tick * 0.05) * 0.1; break;
-                    case 'zoom': renderX = (canvasWidth - drawW) / 2; renderY = (canvasHeight - drawH) / 2; const pulse = 1 + (Math.sin(this.tick * (P.pulseSpeed||0.1)) + 1) / 2 * ((P.maxScale||1.5) - 1); scaleX = pulse; scaleY = pulse; break;
-                    case 'panic': renderX += (Math.random() - 0.5) * (P.jitterRange||10); renderY += (Math.random() - 0.5) * (P.jitterRange||10); break;
-                    case 'teleport': if (Math.random() < (P.interval||0.02)) this.x = Math.random() * (canvasWidth - drawW); renderX = this.x; alpha = Math.abs(Math.sin(this.tick * (P.alphaSpeed||0.1))); break;
-                    case 'moonwalk': renderY += Math.sin(this.tick * 0.2) * (P.stepHeight||5); break;
-                    case 'ceiling': renderY = (P.offset || 10); scaleY = -1; break;
-                    case 'wall': 
-                        const offVal = (P.offset || 0); 
-                        const safeW = Math.max(10, canvasWidth - 2 * offVal);
-                        const safeH = Math.max(10, canvasHeight - 2 * offVal);
-                        const cornerRadius = Math.min(60, Math.min(safeW, safeH) / 2); 
-                        
-                        const straightW = safeW - 2 * cornerRadius;
-                        const straightH = safeH - 2 * cornerRadius;
-                        const arcLen = 0.5 * Math.PI * cornerRadius;
-                        const perimTotal = 2 * straightW + 2 * straightH + 4 * arcLen;
-                        
-                        const wallPos = (this.tick * this.speed * 4) % perimTotal;
-                        
-                        if (wallPos < straightW) {
-                            renderX = offVal + cornerRadius + wallPos;
-                            renderY = offVal;
-                            rotation = Math.PI; 
-                        } 
-                        else if (wallPos < straightW + arcLen) {
-                            const prog = (wallPos - straightW) / arcLen;
-                            const angle = -Math.PI/2 + (prog * Math.PI/2);
-                            const cx = canvasWidth - offVal - cornerRadius;
-                            const cy = offVal + cornerRadius;
-                            renderX = cx + Math.cos(angle) * cornerRadius;
-                            renderY = cy + Math.sin(angle) * cornerRadius;
-                            rotation = angle - Math.PI/2;
-                        }
-                        else if (wallPos < straightW + arcLen + straightH) {
-                            const dist = wallPos - (straightW + arcLen);
-                            renderX = canvasWidth - offVal;
-                            renderY = offVal + cornerRadius + dist;
-                            rotation = -Math.PI/2;
-                        }
-                        else if (wallPos < straightW + arcLen + straightH + arcLen) {
-                            const prog = (wallPos - (straightW + arcLen + straightH)) / arcLen;
-                            const angle = 0 + (prog * Math.PI/2);
-                            const cx = canvasWidth - offVal - cornerRadius;
-                            const cy = canvasHeight - offVal - cornerRadius;
-                            renderX = cx + Math.cos(angle) * cornerRadius;
-                            renderY = cy + Math.sin(angle) * cornerRadius;
-                            rotation = angle - Math.PI/2;
-                        }
-                        else if (wallPos < straightW + arcLen + straightH + arcLen + straightW) {
-                            const dist = wallPos - (straightW + arcLen + straightH + arcLen);
-                            renderX = canvasWidth - offVal - cornerRadius - dist;
-                            renderY = canvasHeight - offVal;
-                            rotation = 0;
-                        }
-                        else if (wallPos < straightW + arcLen + straightH + arcLen + straightW + arcLen) {
-                            const prog = (wallPos - (straightW + arcLen + straightH + arcLen + straightW)) / arcLen;
-                            const angle = Math.PI/2 + (prog * Math.PI/2);
-                            const cx = offVal + cornerRadius;
-                            const cy = canvasHeight - offVal - cornerRadius;
-                            renderX = cx + Math.cos(angle) * cornerRadius;
-                            renderY = cy + Math.sin(angle) * cornerRadius;
-                            rotation = angle - Math.PI/2;
-                        }
-                        else if (wallPos < straightW + arcLen + straightH + arcLen + straightW + arcLen + straightH) {
-                            const dist = wallPos - (straightW + arcLen + straightH + arcLen + straightW + arcLen);
-                            renderX = offVal;
-                            renderY = canvasHeight - offVal - cornerRadius - dist;
-                            rotation = Math.PI/2;
-                        }
-                        else {
-                            const prog = (wallPos - (straightW + arcLen + straightH + arcLen + straightW + arcLen + straightH)) / arcLen;
-                            const angle = Math.PI + (prog * Math.PI/2);
-                            const cx = offVal + cornerRadius;
-                            const cy = offVal + cornerRadius;
-                            renderX = cx + Math.cos(angle) * cornerRadius;
-                            renderY = cy + Math.sin(angle) * cornerRadius;
-                            rotation = angle - Math.PI/2;
-                        }
-                        
-                        renderX -= drawW / 2;
-                        renderY -= drawH / 2;
-                        
-                        break;
-                    case 'ghost': renderY = (canvasHeight * 0.5) + Math.sin(this.tick * 0.02) * 50; alpha = (P.fadeMin||0.1) + Math.abs(Math.sin(this.tick * (P.fadeSpd||0.05))) * (1-(P.fadeMin||0.1)); break;
-                    case 'jelly': const sq = Math.sin(this.tick * (P.spd||0.2)) * (P.amount||0.3); scaleY = 1 + sq; scaleX = 1 - sq; renderY = groundY - (drawH * sq * 0.5); break;
-                    case 'drunk': rotation = Math.sin(this.tick * 0.05) * (P.sway||0.7); if (Math.random() < 0.02) this.direction *= -1; renderX += Math.sin(this.tick * 0.1) * 2; break;
-                }
-                
-                // --- CLAMP LOGIC ---
-                if (this.isClamped) {
-                    if (renderX < 0) renderX = 0;
-                    else if (renderX > canvasWidth - drawW) renderX = canvasWidth - drawW;
-                    
-                    if (renderY < 0) renderY = 0;
-                    else if (renderY > canvasHeight - drawH) renderY = canvasHeight - drawH;
-                }
-
-                ctx.save();
-                const centerX = renderX + drawW / 2; const centerY = renderY + drawH / 2;
-                ctx.translate(centerX, centerY);
-                let flip = (this.direction === -1) ? 1 : -1;
-                if (this.style === 'moonwalk') flip *= -1; 
-                if (['roll', 'wall'].includes(this.style)) flip = 1; 
-                ctx.scale(flip * scaleX, scaleY); ctx.rotate(rotation); ctx.globalAlpha = alpha;
-                ctx.drawImage(this.image, -drawW / 2, -drawH / 2, drawW, drawH);
-                ctx.restore();
-            }
-        }
-
-        // --- Core Functions ---
-        function resizeCanvas() {
-            // Updated for Flex Layout
-            const containerW = canvasContainer.clientWidth;
-            const containerH = canvasContainer.clientHeight;
-            const ratioValue = aspectRatioSelect.value;
-            let targetW = containerW, targetH = containerH;
-            if (ratioValue !== 'auto') {
-                const [rw, rh] = ratioValue.split(':').map(Number);
-                if (containerW / containerH > rw / rh) { targetH = containerH; targetW = targetH * (rw/rh); } 
-                else { targetW = containerW; targetH = targetW / (rw/rh); }
-            }
-            
-            // 1. Get Device Pixel Ratio (DPR) - Default to 1 if undefined
-            const dpr = window.devicePixelRatio || 1;
-
-            // 2. Set Internal Resolution (Physical Pixels)
-            canvas.width = Math.floor(targetW * dpr);
-            canvas.height = Math.floor(targetH * dpr);
-
-            // 3. Set CSS Display Size (Logical Pixels)
-            canvas.style.width = `${targetW}px`;
-            canvas.style.height = `${targetH}px`;
-
-            // 4. Normalize Coordinate System
-            ctx.scale(dpr, dpr);
-
-            // 5. Re-apply Smoothing
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'high';
-
-            resolutionDisplay.innerText = `${canvas.width} x ${canvas.height} (DPR: ${dpr})`;
-            initSnow();
-        }
-        window.addEventListener('resize', resizeCanvas);
-        aspectRatioSelect.addEventListener('change', resizeCanvas);
-
-        bgInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => { 
-                const img = new Image(); 
-                img.onload = () => { 
-                    bgImage = img; 
-                    checkOverlay(); 
-                    
-                    // --- Auto Aspect Ratio Logic ---
-                    // 1. Remove existing 'Original' option if exists
-                    const existingOption = Array.from(aspectRatioSelect.options).find(opt => opt.text.startsWith('Original'));
-                    if (existingOption) existingOption.remove();
-
-                    // 2. Add new Option with image dimensions
-                    const newOption = document.createElement('option');
-                    newOption.value = `${img.width}:${img.height}`;
-                    newOption.text = `Original (${img.width}x${img.height})`;
-                    aspectRatioSelect.add(newOption, 1); // Insert after Auto
-
-                    // 3. Select it and Resize
-                    aspectRatioSelect.value = newOption.value;
-                    resizeCanvas();
-                }; 
-                img.src = ev.target.result; 
-            };
-            reader.readAsDataURL(file);
-        });
-
-        titleInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                const img = new Image();
-                img.onload = () => {
-                    if(!titleEntity) titleEntity = new TitleEntity(img);
-                    else titleEntity.image = img;
-                    titleEntity.setStyle(titleStyleSelect.value);
-                    renderTitleParams();
-                    checkOverlay();
-                    titleParamsContainer.classList.remove('hidden');
-                };
-                img.src = ev.target.result;
-            };
-            reader.readAsDataURL(file);
-        });
-
-        const titleOptions = Object.entries(TITLE_STYLE_DEF).map(([k, d]) => `<option value="${k}">${d.label}</option>`).join('');
-        titleStyleSelect.innerHTML = titleOptions;
-
-        titleStyleSelect.addEventListener('change', (e) => {
-            if(titleEntity) {
-                titleEntity.setStyle(e.target.value);
-                renderTitleParams();
-            }
-        });
-
-        function renderTitleParams() {
-            if(!titleEntity) return;
-            const config = TITLE_STYLE_DEF[titleEntity.style];
-            if(!config || !config.params) {
-                titleParamsContainer.innerHTML = '';
-                return;
-            }
-            titleParamsContainer.innerHTML = config.params.map(p => {
-                const val = titleEntity.customParams[p.key] ?? p.def;
-                return `
-                <div class="mb-2">
-                    <div class="flex justify-between text-[10px] text-slate-400 mb-0.5"><span>${p.label}</span></div>
-                    <div class="flex gap-1">
-                        <input type="range" min="${p.min}" max="${p.max}" step="${(p.max-p.min)/20}" value="${val}" oninput="updateTitleParam('${p.key}', this.value, this)" class="flex-1">
-                        <input type="number" min="${p.min}" max="${p.max}" step="${(p.max-p.min)/20}" value="${val}" oninput="updateTitleParam('${p.key}', this.value, this)" class="w-10 bg-slate-900 border border-slate-600 rounded px-1 py-0 text-[10px] text-right text-white">
+            <!-- Props -->
+            <div class="flex-1 flex flex-col overflow-hidden min-h-0">
+                <div class="px-4 py-2 bg-slate-800/30 flex justify-between items-center shrink-0">
+                    <span class="text-xs font-bold text-slate-300">소품 / 장식 <span id="decorCount" class="ml-1 text-[10px] text-slate-500 font-mono">0</span></span>
+                    <label class="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2 py-1 rounded shadow-lg transition flex items-center gap-1 font-bold">
+                        <i class="fa-solid fa-plus"></i> 추가
+                        <input type="file" id="decorInput" accept="image/*" multiple class="hidden">
+                    </label>
+                </div>
+                <div id="decorList" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
+                    <div id="emptyDecor" class="h-full flex flex-col items-center justify-center text-slate-600 space-y-2 opacity-60">
+                        <i class="fa-regular fa-image text-2xl mb-1"></i>
+                        <p class="text-[10px]">등록된 소품 없음</p>
                     </div>
-                </div>`;
-            }).join('');
-        }
+                </div>
+            </div>
+        </aside>
 
-        window.updateTitleParam = (key, val, el) => {
-            if(titleEntity) {
-                titleEntity.customParams[key] = parseFloat(val);
-                syncInputs(el, val);
-            }
-        };
+        <!-- [CENTER] Stage -->
+        <main class="flex-1 bg-slate-950 relative overflow-hidden flex flex-col group" id="canvasContainer">
+            <div class="absolute inset-0 pointer-events-none opacity-[0.03]" 
+                 style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 40px 40px;">
+            </div>
 
-        function checkOverlay() {
-            if(characters.length > 0 || titleEntity) overlay.style.opacity = '0';
-        }
-
-        charInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            if(!files.length) return;
-            files.forEach(file => {
-                if(characters.length >= MAX_CHARS) return;
-                const reader = new FileReader();
-                reader.onload = (ev) => { const img = new Image(); img.onload = () => { characters.push(new Character('c_'+Date.now()+Math.random().toString(36).substr(2,5), img, file.name.split('.')[0].substr(0,8))); renderCharacterList(); checkOverlay(); }; img.src = ev.target.result; };
-                reader.readAsDataURL(file);
-            });
-            charInput.value = '';
-        });
-
-        // --- Decoration Logic ---
-        decorInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            if(!files.length) return;
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (ev) => { 
-                    const img = new Image(); 
-                    img.onload = () => { 
-                        decorations.push(new Decoration('d_'+Date.now()+Math.random().toString(36).substr(2,5), img, file.name.split('.')[0].substr(0,8))); 
-                        renderDecorationList(); 
-                        checkOverlay(); 
-                    }; 
-                    img.src = ev.target.result; 
-                };
-                reader.readAsDataURL(file);
-            });
-            decorInput.value = '';
-        });
-
-        function renderDecorationList() {
-            decorListContainer.innerHTML = '';
-            decorCountLabel.innerText = decorations.length;
-            if (decorations.length === 0) { emptyDecor.style.display = 'flex'; decorListContainer.appendChild(emptyDecor); return; }
-            emptyDecor.style.display = 'none';
-
-            const decorOptions = Object.entries(DECOR_STYLE_DEF).map(([k, d]) => `<option value="${k}">${d.label}</option>`).join('');
-
-            decorations.forEach(decor => {
-                const el = document.createElement('div');
-                el.className = 'bg-slate-800 rounded-lg p-2 border border-slate-700 hover:border-slate-500 transition mb-1';
-                el.innerHTML = `
-                    <div class="flex items-center gap-2 mb-1">
-                        <div class="w-8 h-8 rounded bg-slate-700 overflow-hidden shrink-0 border border-slate-600"><img src="${decor.image.src}" class="w-full h-full object-contain"></div>
-                        <div class="flex-1 min-w-0"><div class="text-[11px] font-bold text-white truncate">${decor.name}</div></div>
-                        <button onclick="removeDecoration('${decor.id}')" class="text-slate-500 hover:text-red-400 p-1"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex-1 flex items-center justify-center p-8 overflow-hidden relative z-10">
+                <canvas id="mainCanvas" class="shadow-2xl shadow-black/50 bg-slate-900 transition-all duration-300 ring-1 ring-white/10"></canvas>
+            
+                <div id="overlay" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-500">
+                    <div class="glass-panel p-6 text-center border-t-2 border-blue-500 shadow-2xl max-w-sm pointer-events-auto">
+                        <h3 class="text-xl font-bold text-white mb-2">스튜디오에 오신 것을 환영합니다</h3>
+                        <p class="text-xs text-slate-400 mb-4">왼쪽 패널에서 에셋을 업로드하여 모션 그래픽 제작을 시작하세요.</p>
+                        <div class="grid grid-cols-3 gap-2 text-[10px] text-slate-500 font-mono">
+                            <div class="bg-slate-800/50 p-2 rounded">1. 업로드</div>
+                            <div class="bg-slate-800/50 p-2 rounded">2. 애니메이션</div>
+                            <div class="bg-slate-800/50 p-2 rounded">3. 내보내기</div>
+                        </div>
                     </div>
-                    
-                    <div class="mb-2">
-                        <select onchange="updateDecorParam('${decor.id}', 'style', this.value)" class="w-full bg-slate-700 border border-slate-600 rounded px-1 py-1 text-[10px] text-white focus:border-blue-500 outline-none">
-                            ${Object.entries(DECOR_STYLE_DEF).map(([k, d]) => `<option value="${k}" ${decor.style===k?'selected':''}>${d.label}</option>`).join('')}
+                </div>
+
+                <div id="processingOverlay" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center z-50">
+                    <div class="relative">
+                        <div class="w-12 h-12 border-4 border-slate-800 border-t-blue-500 rounded-full animate-spin"></div>
+                    </div>
+                    <div class="text-white font-bold mt-4 animate-pulse">파일 변환 중...</div>
+                </div>
+            </div>
+
+            <!-- Bottom Status Bar -->
+            <div class="h-6 bg-slate-900 border-t border-white/5 flex items-center justify-between px-4 text-[10px] text-slate-500 shrink-0 z-20 select-none">
+                <span id="resolutionDisplay">준비됨</span>
+                <div class="flex gap-2">
+                    <span id="recordingStatus" class="hidden text-red-400 font-bold animate-pulse flex items-center gap-1">
+                        <i class="fa-solid fa-circle text-[6px]"></i> 녹화 중
+                    </span>
+                    <span>자동 저장: 비활성</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- [RIGHT] Inspector Panel -->
+        <aside class="w-72 shrink-0 border-l border-white/5 bg-slate-900/50 backdrop-blur-sm z-20 flex flex-col overflow-y-auto custom-scrollbar relative">
+            
+            <!-- 1. SCENE SETTINGS (Default View) -->
+            <div id="sceneSettings" class="flex flex-col h-full transition-all duration-300">
+                <div class="p-4 pb-2">
+                    <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1"><i class="fa-solid fa-sliders mr-1"></i> 장면 설정 (Scene)</h2>
+                </div>
+
+                <div class="p-4 space-y-6 flex-1">
+                    <!-- Canvas Size -->
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">화면 비율</label>
+                        <select id="aspectRatio" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 outline-none focus:border-blue-500 transition">
+                            <option value="auto">창 크기에 맞춤</option>
+                            <option value="1:1">정사각형 (1:1)</option>
+                            <option value="4:5">인스타그램 (4:5)</option>
+                            <option value="9:16">숏폼/스토리 (9:16)</option>
+                            <option value="16:9">와이드스크린 (16:9)</option>
                         </select>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-x-2 gap-y-1">
-                        <div>
-                            <div class="flex justify-between text-[9px] text-slate-400"><span>가로 (X)</span><span>${Math.round(decor.x*100)}%</span></div>
-                            <input type="range" min="0" max="1" step="0.01" value="${decor.x}" oninput="updateDecorParam('${decor.id}', 'x', this.value)" class="w-full">
+                    <!-- Background -->
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">배경 설정</label>
+                        <div class="flex bg-slate-800 rounded p-1 mb-2">
+                            <button onclick="setBgMode('transparent')" id="btnBgTransparent" class="flex-1 py-1 text-[10px] rounded bg-slate-600 text-white font-bold transition">투명</button>
+                            <button onclick="setBgMode('color')" id="btnBgColor" class="flex-1 py-1 text-[10px] rounded text-slate-400 hover:text-white transition">단색</button>
+                            <button onclick="setBgMode('image')" id="btnBgImage" class="flex-1 py-1 text-[10px] rounded text-slate-400 hover:text-white transition">이미지</button>
                         </div>
-                        <div>
-                            <div class="flex justify-between text-[9px] text-slate-400"><span>세로 (Y)</span><span>${Math.round(decor.y*100)}%</span></div>
-                            <input type="range" min="0" max="1" step="0.01" value="${decor.y}" oninput="updateDecorParam('${decor.id}', 'y', this.value)" class="w-full">
+                        <div id="bgColorControl" class="hidden flex items-center gap-2 bg-slate-800/50 p-2 rounded border border-slate-700">
+                            <input type="color" id="bgColorInput" value="#0f172a" class="w-6 h-6 rounded cursor-pointer border-none bg-transparent">
+                            <span class="text-[10px] text-slate-400 font-mono" id="bgColorHex">#0f172a</span>
                         </div>
-                        <div>
-                            <div class="flex justify-between text-[9px] text-slate-400"><span>크기 (Scale)</span><span>${decor.scale}x</span></div>
-                            <input type="range" min="0.1" max="5.0" step="0.1" value="${decor.scale}" oninput="updateDecorParam('${decor.id}', 'scale', this.value)" class="w-full">
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-[9px] text-slate-400"><span>회전 (Angle)</span><span>${decor.rotation}°</span></div>
-                            <input type="range" min="0" max="360" step="1" value="${decor.rotation}" oninput="updateDecorParam('${decor.id}', 'rotation', this.value)" class="w-full">
+                        <div id="bgImageControl" class="hidden">
+                            <label class="flex items-center justify-center w-full h-8 bg-slate-800 hover:bg-slate-700 border border-slate-700 border-dashed rounded cursor-pointer transition group">
+                                <span class="text-xs text-slate-400 group-hover:text-white"><i class="fa-regular fa-image mr-1"></i> 이미지 업로드</span>
+                                <input type="file" id="bgInput" accept="image/*" class="hidden">
+                            </label>
+                            <div id="bgImageName" class="text-[9px] text-slate-500 mt-1 truncate hidden">파일명.jpg</div>
                         </div>
                     </div>
-                `;
-                decorListContainer.appendChild(el);
-            });
-        }
 
-        window.updateDecorParam = (id, key, val) => {
-            const d = decorations.find(x => x.id === id);
-            if(d) {
-                if (key === 'style') {
-                    d.style = val;
-                } else {
-                    d[key] = parseFloat(val);
-                }
-                // Update text label logic omitted for performance
-            }
-        };
-        
-        window.removeDecoration = (id) => { decorations = decorations.filter(d => d.id !== id); renderDecorationList(); };
-
-        window.toggleCharClamp = (id) => {
-            const c = characters.find(x => x.id === id);
-            if (c) {
-                c.isClamped = !c.isClamped;
-            }
-        };
-
-        function renderCharacterList() {
-            charListContainer.innerHTML = '';
-            charCountLabel.innerText = `${characters.length}/${MAX_CHARS}`;
-            if (characters.length === 0) { emptyState.style.display = 'flex'; charListContainer.appendChild(emptyState); return; } 
-            emptyState.style.display = 'none';
-            characters.forEach((char) => {
-                const styleConfig = STYLE_DEF[char.style];
-                const styleOptions = Object.entries(STYLE_DEF).map(([k, d]) => `<option value="${k}" ${char.style===k?'selected':''}>${d.label}</option>`).join('');
-                let paramsHtml = '';
-                if (styleConfig && styleConfig.params) {
-                    paramsHtml = styleConfig.params.map(p => {
-                        const val = char.customParams[p.key] ?? p.def;
-                        const step = p.step || (p.max <= 1 ? 0.01 : 1);
-                        return `
-                            <div class="mb-2">
-                                <div class="flex justify-between text-[10px] text-slate-400 mb-1"><span>${p.label}</span></div>
-                                <div class="flex gap-2">
-                                    <input type="range" min="${p.min}" max="${p.max}" step="${step}" value="${val}" oninput="updateCharParam('${char.id}', '${p.key}', this.value, this)" class="flex-1">
-                                    <input type="number" min="${p.min}" max="${p.max}" step="${step}" value="${val}" oninput="updateCharParam('${char.id}', '${p.key}', this.value, this)" class="w-12 bg-slate-800 border border-slate-600 rounded px-1 py-0 text-[10px] text-right text-white">
-                                </div>
-                            </div>`;
-                    }).join('');
-                }
-                const el = document.createElement('div');
-                el.className = 'bg-slate-800 rounded-lg p-2 border border-slate-700 hover:border-slate-500 transition mb-2';
-                el.innerHTML = `
-                    <div class="flex items-center gap-2 mb-2 bg-slate-900/50 p-1.5 rounded">
-                        <div class="w-10 h-10 rounded bg-slate-700 overflow-hidden shrink-0 border border-slate-600"><img src="${char.image.src}" class="w-full h-full object-contain"></div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-[12px] font-bold text-white truncate">${char.name}</div>
-                            <div class="text-[10px] text-slate-400 truncate">ID: ${char.id.substr(2,6)}</div>
+                    <!-- Title/Logo -->
+                    <div class="space-y-2 p-3 bg-slate-800/30 rounded border border-white/5">
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-[10px] font-bold text-blue-400 uppercase">메인 소품 / 로고</label>
+                            <div class="flex gap-1">
+                                <button onclick="removeTitleEntity()" class="text-slate-500 hover:text-red-400 transition" title="삭제"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                                <label class="cursor-pointer text-[9px] bg-slate-700 hover:bg-slate-600 px-2 py-0.5 rounded text-white transition">
+                                    업로드
+                                    <input type="file" id="titleInput" accept="image/*" class="hidden">
+                                </label>
+                            </div>
                         </div>
-                        <button onclick="removeCharacter('${char.id}')" class="text-slate-500 hover:text-red-400 w-6 h-6 flex items-center justify-center rounded hover:bg-slate-700 transition"><i class="fa-solid fa-xmark"></i></button>
+                        <select id="titleStyle" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[10px] text-slate-300 outline-none focus:border-blue-500 mb-1">
+                            <!-- JS Generated -->
+                        </select>
+                        <div id="titleParamsContainer" class="space-y-2 pt-1"></div>
                     </div>
-                    <div class="space-y-2 p-1">
-                        <select onchange="updateCharStyle('${char.id}', this.value)" class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs text-white focus:border-red-500 outline-none">${styleOptions}</select>
-                        
-                        <!-- Clamp Toggle -->
-                        <div class="flex items-center gap-2 px-1">
-                            <input type="checkbox" id="clamp_${char.id}" ${char.isClamped?'checked':''} onchange="toggleCharClamp('${char.id}')" class="w-3.5 h-3.5 accent-blue-500 rounded cursor-pointer">
-                            <label for="clamp_${char.id}" class="text-[10px] text-slate-400 cursor-pointer select-none hover:text-white transition">화면 이탈 방지 (Clamp)</label>
+
+                    <!-- Particles -->
+                    <div class="space-y-2 p-3 bg-slate-800/30 rounded border border-white/5">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">파티클 효과</label>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="particleToggle" class="w-3 h-3 accent-blue-500 mr-2">
+                                <button onclick="toggleParticleSettings()" class="text-slate-500 hover:text-white transition"><i class="fa-solid fa-gear"></i></button>
+                            </div>
                         </div>
-
-                        <div class="grid grid-cols-2 gap-x-2 gap-y-1 pt-1 border-t border-slate-700/30">
-                            <div><span class="text-[9px] text-slate-400 block font-bold">속도 (Speed)</span><div class="flex gap-1"><input type="range" min="0.1" max="5.0" step="0.1" value="${char.speed}" oninput="updateCharSpeed('${char.id}',this.value,this)" class="flex-1 w-full"><input type="number" value="${char.speed}" oninput="updateCharSpeed('${char.id}',this.value,this)" class="w-10 bg-slate-800 text-[9px] text-center rounded border border-slate-600 text-white"></div></div>
-                            <div><span class="text-[9px] text-slate-400 block font-bold">크기 (Scale)</span><div class="flex gap-1"><input type="range" min="0.5" max="3.0" step="0.1" value="${char.scale}" oninput="updateCharScale('${char.id}',this.value,this)" class="flex-1 w-full"><input type="number" value="${char.scale}" oninput="updateCharScale('${char.id}',this.value,this)" class="w-10 bg-slate-800 text-[9px] text-center rounded border border-slate-600 text-white"></div></div>
+                        <div id="particleSettingsPanel" class="hidden pt-2 border-t border-white/5 grid grid-cols-1 gap-2">
+                            <select id="particleType" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-[10px] text-slate-300 outline-none focus:border-blue-500 mb-1"></select>
+                            <div id="particleParamsContainer" class="space-y-2"></div>
                         </div>
-                        <div class="pt-2 border-t border-slate-700/50">${paramsHtml}</div>
-                    </div>`;
-                charListContainer.appendChild(el);
-            });
-        }
+                    </div>
+                </div>
 
-        window.removeCharacter = (id) => { characters = characters.filter(c => c.id !== id); renderCharacterList(); };
-        window.clearAllCharacters = () => { 
-            if(confirm('모든 캐릭터와 설정을 초기화하시겠습니까?')) { 
-                characters = []; 
-                decorations = []; // Clear decors too
-                titleEntity = null; 
-                renderCharacterList(); 
-                renderDecorationList();
-                overlay.style.opacity = '1'; 
-                titleParamsContainer.innerHTML=''; 
-                titleParamsContainer.classList.add('hidden'); 
-            } 
-        };
-        window.updateCharStyle = (id, val) => { const c = characters.find(x=>x.id===id); if(c) { c.setStyle(val); renderCharacterList(); } };
-        function syncInputs(el, val) { if(!el.parentElement)return; el.parentElement.querySelectorAll('input').forEach(i => { if(i!==el) i.value=val; }); }
-        window.updateCharParam = (id, k, v, el) => { const c = characters.find(x=>x.id===id); if(c) { c.customParams[k] = parseFloat(v); syncInputs(el, v); } };
-        window.updateCharSpeed = (id, v, el) => { const c = characters.find(x=>x.id===id); if(c) { c.speed = parseFloat(v); syncInputs(el, v); } };
-        window.updateCharScale = (id, v, el) => { const c = characters.find(x=>x.id===id); if(c) { c.scale = parseFloat(v); syncInputs(el, v); } };
-        window.toggleSnowSettings = () => snowSettingsPanel.classList.toggle('hidden');
-        window.updateSnowConfig = (k, v, el) => { snowConfig[k] = parseFloat(v); if(k==='count') initSnow(); };
-        
-        window.downloadCanvas = () => { 
-            const link = document.createElement('a'); 
-            link.download = `snapshot_${Date.now()}.png`; 
-            link.href = canvas.toDataURL(); 
-            link.click(); 
-        };
+                <!-- Export (Always visible in Scene Settings) -->
+                <div class="mt-auto p-4 border-t border-white/5 bg-slate-900 z-10">
+                    <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3"><i class="fa-solid fa-video mr-1"></i> 결과물 내보내기</h2>
+                    <div class="flex flex-col gap-3">
+                        <div class="flex items-center justify-between bg-slate-800 rounded p-1">
+                            <select id="recordFormat" onchange="updateRecordBtnLabel()" class="bg-transparent text-xs text-white font-bold outline-none pl-2 py-1 w-full cursor-pointer">
+                                <option value="webm">WebM (고화질 영상)</option>
+                                <option value="gif">GIF (루프 애니메이션)</option>
+                            </select>
+                            <i class="fa-solid fa-caret-down text-slate-500 mr-2 text-xs"></i>
+                        </div>
+                        <button id="recordBtn" onclick="toggleRecording()" class="w-full h-10 bg-red-600 hover:bg-red-500 active:bg-red-700 text-white rounded font-bold text-sm transition shadow-lg flex items-center justify-center gap-2 group">
+                            <div id="recordIcon" class="w-2.5 h-2.5 rounded-full bg-white group-hover:animate-ping"></div>
+                            <span id="recordText">녹화 시작</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-        // --- RECORDING LOGIC ---
-        function updateRecordBtnLabel() {
-            const fmt = recordFormat.value;
-            if(!isRecording) {
-                recordText.innerText = fmt === 'webm' ? "REC (60s)" : "REC (10s)";
-            }
-        }
-
-        function toggleRecording() {
-            if(!isRecording) startRecording();
-            else stopRecording();
-        }
-
-        function startRecording() {
-            if (isRecording) return;
-            const fmt = recordFormat.value;
-            
-            if (fmt === 'webm') {
-                startWebMRecording();
-            } else {
-                startGIFRecording();
-            }
-            
-            isRecording = true;
-            recordingStartTime = Date.now();
-            recordIcon.classList.add('animate-pulse-red');
-            recordIcon.style.backgroundColor = '#ef4444';
-            recordBtn.classList.add('border-red-500', 'bg-slate-800', 'ring', 'ring-red-500/30');
-            recordingStatus.classList.remove('hidden');
-            recordFormat.disabled = true;
-        }
-
-        function stopRecording() {
-            if (!isRecording) return;
-            
-            const fmt = recordFormat.value;
-            if (fmt === 'webm') {
-                if(mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-                clearInterval(recordingInterval);
-            } else {
-                finishGIFRecording();
-            }
-
-            isRecording = false;
-            
-            // UI Reset
-            recordIcon.classList.remove('animate-pulse-red');
-            recordIcon.style.backgroundColor = '#ef4444'; 
-            recordBtn.classList.remove('border-red-500', 'bg-slate-800', 'ring', 'ring-red-500/30');
-            updateRecordBtnLabel();
-            recordingStatus.classList.add('hidden');
-            recordFormat.disabled = false;
-        }
-
-        // WebM Logic
-        function startWebMRecording() {
-            const stream = canvas.captureStream(60); 
-            let options = { mimeType: 'video/webm;codecs=vp9', videoBitsPerSecond: 5000000 };
-            if (!MediaRecorder.isTypeSupported(options.mimeType)) options = { mimeType: 'video/webm', videoBitsPerSecond: 5000000 };
-
-            try { mediaRecorder = new MediaRecorder(stream, options); } 
-            catch (e) { alert('녹화 지원 불가'); isRecording=false; return; }
-
-            recordedChunks = [];
-            mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
-            mediaRecorder.onstop = saveWebM;
-            mediaRecorder.start();
-
-            recordingInterval = setInterval(() => {
-                const elapsed = Date.now() - recordingStartTime;
-                const remaining = Math.max(0, Math.ceil((MAX_TIME_WEBM - elapsed) / 1000));
-                recordText.innerText = `REC (${remaining}s)`;
-                if (elapsed >= MAX_TIME_WEBM) stopRecording();
-            }, 1000);
-        }
-
-        function saveWebM() {
-            const blob = new Blob(recordedChunks, { type: 'video/webm' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none'; a.href = url; a.download = `christmas_party_${Date.now()}.webm`;
-            document.body.appendChild(a); a.click();
-            setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 100);
-        }
-
-        // GIF Logic
-        async function startGIFRecording() {
-            // Worker Blob Fetch workaround for CORS
-            try {
-                const response = await fetch('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js');
-                const blob = await response.blob();
-                const workerUrl = URL.createObjectURL(blob);
+            <!-- 2. OBJECT INSPECTOR (Hidden by Default) -->
+            <div id="objectSettings" class="absolute inset-0 bg-slate-900/95 backdrop-blur-md z-30 flex flex-col translate-x-full transition-transform duration-300">
+                <div class="p-4 border-b border-white/5 flex items-center gap-3 bg-slate-900">
+                    <button onclick="deselectObject()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="text-xs font-bold text-white uppercase tracking-widest">속성 (Properties)</h2>
+                </div>
                 
-                gifInstance = new GIF({
-                    workers: 2,
-                    quality: 10,
-                    width: canvas.width,
-                    height: canvas.height,
-                    workerScript: workerUrl
-                });
-            } catch(e) {
-                console.error("GIF worker load failed", e);
-                alert("GIF 라이브러리 로드 실패. WebM을 사용해주세요.");
-                stopRecording();
-                return;
-            }
+                <div id="inspectorContent" class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                    <!-- Dynamic Content Injected Here -->
+                    <div class="text-center text-slate-500 mt-10">선택된 객체 없음</div>
+                </div>
+            </div>
 
-            // Capture Loop
-            gifIntervalId = setInterval(() => {
-                // Check Time Limit
-                const elapsed = Date.now() - recordingStartTime;
-                const remaining = Math.max(0, Math.ceil((MAX_TIME_GIF - elapsed) / 1000));
-                recordText.innerText = `REC (${remaining}s)`;
-                
-                if (elapsed >= MAX_TIME_GIF) {
-                    stopRecording(); // Trigger finish
-                    return;
-                }
+        </aside>
 
-                // Add Frame
-                // Must draw to a temp canvas if we want to scale or just pass element
-                // Since canvas size might be huge (HiDPI), we might want to scale down for GIF performance?
-                // For now, full res.
-                gifInstance.addFrame(canvas, {copy: true, delay: GIF_DELAY});
+    </div>
 
-            }, GIF_DELAY);
-        }
 
-        function finishGIFRecording() {
-            clearInterval(gifIntervalId);
-            if (!gifInstance) return;
 
-            processingOverlay.classList.remove('hidden');
+    <!-- Style Gallery Page (Full Screen Overlay) - One Stage Layout -->
+    <div id="galleryPage" class="hidden absolute inset-0 top-14 bg-slate-950 z-40 flex flex-col transition-all duration-300">
+        <!-- Gallery Header -->
+        <div class="px-8 py-5 border-b border-white/5 bg-slate-900/50 backdrop-blur shrink-0 flex items-center justify-between">
+            <div>
+                <h2 class="text-xl font-bold text-white tracking-tight mb-1"><i class="fa-solid fa-layer-group text-blue-500 mr-3"></i>스타일 갤러리</h2>
+                <p class="text-slate-400 text-xs">왼쪽 목록에서 스타일을 선택하여 미리보세요.</p>
+            </div>
+            <button onclick="closeStyleGallery()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition font-bold text-sm border border-slate-700">
+                <i class="fa-solid fa-arrow-left mr-2"></i> 돌아가기
+            </button>
+        </div>
 
-            gifInstance.on('finished', function(blob) {
-                processingOverlay.classList.add('hidden');
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none'; a.href = url; a.download = `christmas_party_${Date.now()}.gif`;
-                document.body.appendChild(a); a.click();
-                setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 100);
-                gifInstance = null;
-            });
+        <!-- Split Layout -->
+        <div class="flex-1 flex overflow-hidden">
+            <!-- [Left] Style List -->
+            <div class="w-80 shrink-0 border-r border-white/5 bg-slate-900/30 overflow-y-auto custom-scrollbar p-4 space-y-2" id="styleListContainer">
+                <!-- JS Generated List Items -->
+            </div>
 
-            gifInstance.render();
-        }
+            <!-- [Right] Preview Stage -->
+            <div class="flex-1 bg-slate-950 relative flex items-center justify-center p-12 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-slate-950">
+                <!-- Background Grid Pattern -->
+                <div class="absolute inset-0 opacity-[0.03] pointer-events-none" 
+                     style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 40px 40px;">
+                </div>
 
-        function initSnow() { snowflakes = []; for(let i=0; i<snowConfig.count; i++) snowflakes.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*2+1, s:Math.random()*2+0.5, o:Math.random()*0.5+0.3, sway:Math.random()*100 }); }
-        function drawBgCover(ctx, img, cw, ch) { const ir = img.width/img.height, cr = cw/ch; let rw, rh, rx, ry; if(cr > ir) { rw = cw; rh = cw/ir; rx = 0; ry = (ch-rh)/2; } else { rh = ch; rw = ch*ir; ry = 0; rx = (cw-rw)/2; } ctx.drawImage(img, rx, ry, rw, rh); }
+                <!-- Single Large Preview Canvas -->
+                <div id="galleryPreviewMount" class="relative w-full max-w-2xl aspect-video bg-slate-900 rounded-xl border border-white/10 shadow-2xl flex items-center justify-center overflow-hidden">
+                    <div class="text-slate-500 text-sm animate-pulse">미리보기 로딩 중...</div>
+                </div>
 
-        function animate(snap=false) {
-            const dpr = window.devicePixelRatio || 1;
-            const logicalW = canvas.width / dpr;
-            const logicalH = canvas.height / dpr;
+                <!-- Floating Info Badge -->
+                <div class="absolute bottom-8 left-1/2 -translate-x-1/2 bg-slate-900/80 backdrop-blur border border-white/10 px-6 py-3 rounded-full text-center">
+                    <div id="previewStyleName" class="text-white font-bold text-lg">스타일 이름</div>
+                    <div id="previewStyleKey" class="text-slate-500 text-xs font-mono uppercase">KEY_NAME</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            ctx.clearRect(0, 0, logicalW, logicalH);
-            
-            ctx.imageSmoothingEnabled = true; 
-            ctx.imageSmoothingQuality = 'high';
-            
-            if(bgImage) drawBgCover(ctx, bgImage, logicalW, logicalH);
-            else { const g = ctx.createLinearGradient(0,0,0,logicalH); g.addColorStop(0,'#0f172a'); g.addColorStop(1,'#1e293b'); ctx.fillStyle=g; ctx.fillRect(0,0,logicalW,logicalH); }
-            
-            if(!snap) tick++;
-            
-            if(titleEntity) titleEntity.draw(ctx, logicalW, logicalH);
-            
-            // Draw Decorations (Behind Characters)
-            decorations.forEach(d => d.draw(ctx, logicalW, logicalH));
-
-            [...characters].sort((a,b)=>a.scale-b.scale).forEach(c => c.updateAndDraw(ctx, logicalW, logicalH));
-            
-            if(snowToggle.checked) {
-                ctx.beginPath(); ctx.fillStyle="white";
-                snowflakes.forEach(f => {
-                    const r = f.r * snowConfig.size;
-                    if(!snap) { 
-                        f.y += f.s * snowConfig.speed; 
-                        f.x += snowConfig.wind + Math.sin(f.y*0.01 + f.sway)*0.5; 
-                        if(f.y > logicalH) { f.y = -r; f.x = Math.random()*logicalW; } 
-                        if(f.x > logicalW+r) f.x = -r; else if(f.x < -r) f.x = logicalW+r; 
-                    }
-                    ctx.globalAlpha = f.o; ctx.moveTo(f.x, f.y); ctx.arc(f.x, f.y, r, 0, Math.PI*2);
-                });
-                ctx.fill(); ctx.globalAlpha = 1;
-            }
-            if(!snap) requestAnimationFrame(() => animate());
-        }
-        
-        // Initial Trigger
-        resizeCanvas(); 
-        animate();
-    </script>
+    <!-- Core Logic -->
+    <script src="js/script.js"></script>
 </body>
 </html>
