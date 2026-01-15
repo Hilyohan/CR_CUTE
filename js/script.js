@@ -256,6 +256,10 @@ class Particle {
         this.reset(true);
     }
 
+    isRising() {
+        return ['ember', 'bubble', 'heart'].includes(this.type);
+    }
+
     reset(initial = false) {
         // Common initialization
         this.x = Math.random() * this.canvasW;
@@ -309,24 +313,34 @@ class Particle {
                 this.color = `hsl(${10 + Math.random()*30}, 100%, 60%)`;
                 break;
             case 'confetti':
-                this.rotation += this.rotationSpeed * 10 * dt;
-                this.x += Math.sin(this.life * 0.05) * (P.spread || 1) * dt;
-                if(this.y > this.canvasH) this.reset();
+                this.y = initial ? Math.random() * this.canvasH : -20;
+                this.size = (Math.random() * 3 + 2) * 1; 
+                this.vy = (Math.random() * 2 + 2) * (P.speed || 3) * 0.2;
+                this.vx = (Math.random() - 0.5) * (P.spread || 2);
+                this.color = `hsl(${Math.random()*360}, 100%, 50%)`;
                 break;
             case 'bubble':
-                this.x += Math.sin(this.life * 0.05 + this.phase) * (P.wobble || 0.5) * dt;
-                if(this.y < -50) this.reset();
+                this.y = initial ? Math.random() * this.canvasH : this.canvasH + 20;
+                this.vy = -(Math.random() * 1 + 0.5) * (P.speed || 1);
+                this.size = (Math.random() * 5 + 5) * (P.size || 1);
                 break;
             case 'fog':
-                if(this.x > this.canvasW + this.size) this.x = -this.size;
+                this.x = Math.random() * this.canvasW;
+                this.y = Math.random() * this.canvasH;
+                this.size = (P.size || 150) * (0.8 + Math.random() * 0.4);
+                this.vx = (P.speed || 0.5) * (0.5 + Math.random() * 0.5);
+                this.vy = 0; 
                 break;
             case 'star':
+                this.size = (Math.random() * 1.5 + 0.5) * (P.size || 1);
+                this.color = `hsl(${P.hue||50}, 100%, 80%)`;
                 this.opacity = 0.5 + Math.sin(this.life * (P.twinkle || 0.05) + this.phase) * 0.5;
                 break;
             case 'heart':
-                this.x += Math.sin(this.life * 0.05 + this.phase) * (P.sway || 1) * dt;
-                this.opacity = Math.min(1, (this.canvasH - this.y) / 100);
-                if(this.y < -50) this.reset();
+                this.y = initial ? Math.random() * this.canvasH : this.canvasH + 20;
+                this.vy = -(Math.random() * 1 + 0.5) * (P.speed || 1.5);
+                this.size = (Math.random() * 5 + 5) * (P.size || 1);
+                this.color = `hsl(${340 + Math.random()*20}, 100%, 60%)`;
                 break;
         }
     }
@@ -920,7 +934,7 @@ class Character {
         }
 
         const centerX = this.x + drawW / 2;
-        const centerY = groundOffset + drawH / 2;
+        const centerY = (this.isClamped ? this.y : 0) + groundOffset + drawH / 2;
         
         ctx.translate(centerX, centerY);
         
